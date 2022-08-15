@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Compound Sake</title>
+</head>
+
+<body>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Open+Sans&display=swap');
+        .hidden{
+            display:none !important;
+        }
+        #gameCanvas {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+        }
+
+        #gameCanvasBG {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+        }
+
+        #snakeboard {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        #score {
+            font-size: 80px;
+            font-weight: bold;
+            text-align: center;
+            opacity: .25;
+            margin-bottom: -80px;
+            margin-top: -40px;
+        }
+
+        #year {
+            font-size: 80px;
+            font-weight: bold;
+            text-align: center;
+            opacity: .25;
+        }
+
+        #addition {
+            position: absolute;
+            font-size: 25px;
+            top: 0px;
+            left: 0px;
+        }
+
+        #snakeGame p {
+            font-family: 'Open Sans', sans-serif;
+            color: "#D9D2CA";
+        }
+
+        #gameScore {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            height: 200px;
+            width: 1200px;
+            display: block;
+            z-index:-1;
+        }
+
+        #allGameMenus {
+            position: absolute;
+            top: -200px;
+            left: 0px;
+            width: 1200px;
+            height: 600px;
+            display: block;
+        }
+
+        #startMenu {
+            display: block;
+            padding: 200px;
+        }
+
+        #startMenu p {
+            text-align: center;
+            z-index: 2;
+        }
+
+        #secretDiv {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            text-align: center;
+            z-index:2;
+            padding-left: 20px;
+        }
+
+        .mainBtn {
+            margin:auto;
+            background-color: #780095;
+            color: white;
+            border: 0px solid;
+            border-radius: 5px;
+            padding: 10px;
+            transition: ease-in 0.5s;
+            margin-bottom: 0px;
+        }
+        .mainBtn:hover {
+            background-color: #880095;
+            padding:15px;
+            transform:scale(1.1);
+            transition: ease-in-out 0.3s;
+            cursor: pointer;
+            margin-bottom:-10px;
+        }
+        .slidecontainer {
+            display:flex;
+            flex-direction: row;
+            justify-content: center;
+        }
+    </style>
+
+    <div id="snakeGame">
+        <div id="gameScore" width="1200" height="600" class="hidden">
+
+            <div id="secretDiv">
+                <div id="secretMessage">
+    
+                </div>
+            </div>
+    
+            <div id="score">
+                <p>Acct: $1000</p>
+            </div>
+            <div id="year">
+                <p>Year: 0</p>
+            </div>
+        </div>
+        <div id="addition">
+            <p></p>
+        </div>
+        <div id="allGameMenus">
+            <div id="restartMenu">
+                <center>
+                    <button id="restartBtn" class="mainBtn" type="button" onclick="restartGame()">Restart with monthly contribution</button>
+                </center>
+            </div>
+            <div id="startMenu">
+               
+                <p id="startText">
+                    Starting with $1000, each square your snake eats is another year of monthly contributions plus compound interest at 7%, the
+                    historical US stock market growth.
+                    <br>
+                    <br>
+                    See how much faster your money grows with each year.
+                    For Round 2, try a monthly contribution.
+                </p>
+                <br>
+                <center>
+                <button id="startBtn" class="mainBtn" type="button" onclick="runGame();"><b>Start Game</b></button>
+<!--                 <button id="restartBtn" class="mainBtn" type="button" onclick="restartGame()"><b>Restart</b></button>
+ -->                
+                <div id="slideContainer" class="slidecontainer">
+                        <p style="padding-right:20px">$0</p>
+                        <input type="range" min="0" max="300" value="0" class="slider" id="monthlySlider" onchange="updateSlider()">
+                        <p style="padding-left:20px">$300</p>
+                      </div>
+                      <div id="slideInfo" style="margin-top:-25px;"><p><b>Monthly Contribution</b></p></div>
+                      <p id="monthlySliderVal" style="padding-top:-20px;" class="slider-centered"></p>
+                      <br>
+
+            </center>
+            </div>
+        </div>
+        <canvas id="gameCanvas" width="1200" height="600" style="z-index:-1;"></canvas>
+        <canvas id="gameCanvasBG" width="1200" height="600" style="z-index:-2;"></canvas>
+    </div>
+
+    <script src="compoundsnake.js"></script>
+
+
+</body>
+
+</html>
