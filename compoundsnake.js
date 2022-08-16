@@ -17,8 +17,12 @@ const monthlySlider = document.getElementById('monthlySlider');
 const monthlySliderVal = document.getElementById('monthlySliderVal');
 
 
+//Most variables are adjustable. If you change the snake width, the food width will change
+//if you change the snakeboard size in the HTML, other things like the graph size will adjust.
+//if you change the interest rate, it will update for all compound interest calculations.
+//It's not perfect, would need QA. For example right now the startMenu has 25% padding which would not work if the snakeboard size were really small...
+//but it's reasonably flexible for currrent demo needs.
 
-//const snakeboard_ctxBG = gameCanvasBG.getContext("2d");
 const snakeboard_bg = "#F5EFE2";
 const snakeboard_border = "#F5EFE2";
 const snake_color = '#780095';
