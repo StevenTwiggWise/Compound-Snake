@@ -45,6 +45,7 @@ var yearlyArray = [];
 var secret = "Employee of the month";
 var underscores = "_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _";
 
+//Update the "addition" variable before anything else, based on slider, so that we can calculate all the score info we need before the user sees anything
 updateSlider();
 
 function updateSlider () {
@@ -121,6 +122,58 @@ function change_direction(event) {
 
 //Event listener for directiion
 document.addEventListener("keydown", change_direction);
+
+
+//ON MOBILE THIS WILL BE A "SWIPE" UP/DOWN/LEFT/RIGHT -- snippet. To be updated.
+document.addEventListener('touchstart', handleTouchStart, false);        
+document.addEventListener('touchmove', handleTouchMove, false);
+
+var xDown = null;                                                        
+var yDown = null;
+
+function getTouches(evt) {
+  return evt.touches ||             // browser API
+         evt.originalEvent.touches; // jQuery
+}                                                     
+                                                                         
+function handleTouchStart(evt) {
+    const firstTouch = getTouches(evt)[0];                                      
+    xDown = firstTouch.clientX;                                      
+    yDown = firstTouch.clientY;                                      
+};                                                
+                                                                         
+function handleTouchMove(evt) {
+    if ( ! xDown || ! yDown ) {
+        return;
+    }
+
+    var xUp = evt.touches[0].clientX;                                    
+    var yUp = evt.touches[0].clientY;
+
+    var xDiff = xDown - xUp;
+    var yDiff = yDown - yUp;
+                                                                         
+    if (Math.abs(xDiff) > Math.abs(yDiff)) {/*most significant*/
+        if (xDiff > 0) {
+            dx = snake_width;
+            dy = 0;
+        } else {
+            dx = snake_width * -1;
+            dy = 0;
+        }
+    } else {
+        if (yDiff > 0) {
+            dx = 0;
+            dy = snake_width;
+        } else {
+            dx = 0;
+            dy = snake_width * -1;
+        }
+    }
+    /* reset values */
+    xDown = null;
+    yDown = null;                                             
+};
 
 //DEFINE SNAKE AND BOARD//////////////////////////////////////////
 /////////////////////////////////////////////////////////////////
