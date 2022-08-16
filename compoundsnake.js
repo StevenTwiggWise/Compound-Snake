@@ -135,7 +135,7 @@ function clearCanvas() {
     //  Select the colour to fill the drawing
     snakeboard_ctx.clearRect(0, 0, snakeboard.width, snakeboard.height);
 }
-function initiateBGCanvas() {
+function initiateBGCanvas() { //This is the newsprint rectangle that goes UNDERNEATH our score, menu and main snake game.
     //  Select the colour to fill the drawing
     snakeboard_ctxBG.fillStyle = snakeboard_bg;
     snakeboard_ctxBG.strokeStyle = snakeboard_border;
@@ -161,6 +161,7 @@ function drawSnakePart(snakePart) {
 function drawSnake() {
     snake.forEach(drawSnakePart);
 }
+
 var sm = 1;
 //Gives the illusion of motion by adding an element to the beginning of the array whose position is affected by our velocity variables, and removing the last array element
 function moveSnake() {
@@ -169,7 +170,7 @@ function moveSnake() {
 
     //Check if it is eating food
     const has_eaten_food = snake[0].x === food_x && snake[0].y === food_y;
-    //if so, simply generate new food and skip popping the last value
+    //if so, generate new food and skip popping the last value
     if (has_eaten_food) {
         // Generate new food location
         generateFood();
@@ -181,11 +182,13 @@ function moveSnake() {
         score = Math.round(calcInterest(score));
         year += 1;
         addition = Math.round(calcInterest(score)-score);
+
         // Display score on screen
         document.getElementById('score').innerHTML = "<p>Acct: $" + dollarUSLocale.format(Math.round(score)) + "</p>";
         document.getElementById('year').innerHTML = "<p>Year: " + year + "</p>";
         document.getElementById('addition').innerHTML = "<p>+$" + addition + "</p>";
-        //Speed up our snake! With a minimum value of 25ms between re-draws
+
+        //Speed up our snake! With a minimum value of 25ms between re-draws... this is for learning, needs to be engaging, not difficult...
         if (gameSpeed >= 110) {
             gameSpeed -= 15;
         } else if (gameSpeed > 75 && gameSpeed <= 105) {
@@ -196,7 +199,7 @@ function moveSnake() {
             gameSpeed -= 1;
         };
 
-        //secret message
+        //secret message lol
         document.getElementById('secretMessage').innerHTML = "<p>Secret Message:   " + secret.substring(0,sm) + underscores.substring(0,((secret.length*2)-sm*2)) + "</p>";
         sm+=1;
 
@@ -224,7 +227,8 @@ function generateFood() {
         if (has_eaten) generateFood();
     });
 }
-//Actually draw the food
+
+//Actually draw the food from the randomFood() information
 function drawFood() {
     snakeboard_ctx.fillStyle = '#50E3C2';
     snakeboard_ctx.strokestyle = '#50E3C2';
@@ -246,6 +250,7 @@ function drawFood() {
 
 }
 
+//This will calculate compound interest on our score including a monthly contribution. The monthly contribution is added before interest, so assuming a 1st of the month deposit date
 function calcInterest (base) {
     for (var i=1;i<=12;i++){
         base += monthlyPayment;
@@ -283,19 +288,19 @@ function endRound () {
     snakeboard_ctx.clearRect(0,0, snakeboard.width, snakeboard.height);
 
     //Hide and show certain things to start round 2
-    additionDiv.classList.add('hidden');
+    additionDiv.classList.add('hidden'); //Hide the number for the next food piece
 
-    //This was part of restart menu -- for now, sticking with refresh button lol
+    //This was part of restart menu... 
     //startMenu.classList.remove('hidden');
     //startText.classList.add('hidden');
     //startBtn.innerHTML = "Restart"
     //document.getElementById('slideContainer').classList.add('hidden');
     //document.getElementById('slideInfo').classList.add('hidden');
 
-    //if(roundsPlayed == 1) restartMenu.classList.remove('hidden');
+    //if(roundsPlayed > 0) restartMenu.classList.remove('hidden');
 
     //Graph will be a certain px wide. Bar width will depend on number of years in array
-    //A boolean. Eight bars will fit before barWidth minus 10px is 0px and we have to get rid of that gap.
+    //barLimit is a boolean. Eighty bars will fit before barWidth minus 10px is 0px and we have to get rid of that gap.
     let barLimit = 1;
     let graphWidth = snakeboard.width*.75;
     let graphHeight = snakeboard.height*.35;
@@ -311,18 +316,18 @@ function endRound () {
 
     
     
-    //Graph the yearly earnings...
+    //Draw a graph of yearly earnings...
 
     //Set Fill Style
     snakeboard_ctx.fillStyle = snake_color;
 
     for (ya; ya < numBars; ya++){
 
-        //Create Bar, animate in to scale
+        //Create Bar, in future animate in
         barHeight = yearlyArray[ya]/yearlyArray[numBars-1] * graphHeight;
         snakeboard_ctx.fillRect(graphStartX, graphStartY, barWidth, barHeight*-1);
 
-        //Create values underneath. 
+        //Create values underneath
         //Create Value Text
         let barValueText = document.createElement("div");
         secretDiv.appendChild(barValueText)
@@ -349,16 +354,14 @@ function endRound () {
         graphStartX += barWidth+10;
     }
 
-    //Add graph label once
+    //Add graph label once: "Interest per month"
     if(minimizeGraph){
-
         //Create label text
         let labelText = document.createElement("div");
         secretDiv.appendChild(labelText)
         let divNameLabel = "labelText";
         labelText.setAttribute('id', divNameLabel)
         labelText.innerHTML = "<p>Interest per Year</p>";
-
         //Style it, to display under bar
         labelText.style.position = "absolute";
         labelText.style.top = graphStartY+10 + "px";
@@ -376,31 +379,25 @@ function endRound () {
 // Main game function, refreshes every 10ms on a recursive loop
 function main() {
 
-    //var startTime = performance.now();
-
+    //If game ending conditions are found, execute the endRound function then exit this main function loop
     if (gameEndCheck()) {
         endRound();
         return;
     };
 
+    //Reset the changing direction variable. If we do change direction, that var will change in the onTick() func
     changing_direction = false;
 
+    //The meat 'n potatoes of functionality, these are the functions called recursively to make the game work. gameSpeed increases when food is eaten.
     setTimeout(function onTick() {
-        clearCanvas();
-        moveSnake();
-        drawSnake();
-        gameEndCheck();
-        drawFood();
-        // Call main again
-        main();
-    }, gameSpeed)
+        clearCanvas();  //clear it so we don't have residual rectangles on canvas
+        moveSnake();    //calculate snake movement, check if it has eaten food, if so calculate new food coordinates
+        drawSnake();    //print the snake info, make it look like it's moving
+        gameEndCheck(); //check if the last move caused an end-game result
+        drawFood();     //if not end of game, draw a new food
+        main();         //do it all again, call this function's parent function recursively
+    }, gameSpeed)       //timer for how fast the game updates/snake speed
     
-/*     var endTime = performance.now()
-
-    console.log("Took " + (endTime-startTime).toFixed(3) + "miliseconds");
-    console.log(gameSpeed)
- */
-
 }
 
 //ON-LOAD FUNCTIONS///////////////////////////////////////////////
@@ -411,29 +408,32 @@ initiateBGCanvas();
 //Generate Food Information (but don't draw it)
 generateFood();
 
-
-
+//Initialize values for our game info
 scoreDiv.innerHTML = "<p>Acct: $" + dollarUSLocale.format(Math.round(score)) + "</p>";
 yearDiv.innerHTML = "<p>Year: " + year + "</p>";
 additionDiv.classList.add('hidden');
 additionDiv.innerHTML = "<p>+$" + addition + "</p>";
 
-
+// This is what's called when the start button is clicked, it starts our game.
 function runGame () {
 
     //Take rounds from -1 to 0 for first run
     roundsPlayed ++;
-
+    //Clear any existing drawing
     snakeboard_ctx.clearRect(0,0, snakeboard.width, snakeboard.height)
 
+    //Hide menu, show score and dollar amount for next food
     startMenu.classList.add('hidden');
     gameScore.classList.remove('hidden');
-    document.getElementById('addition').classList.remove('hidden');
+    additionDiv.classList.remove('hidden');
 
+    //start recursive game loop
     main();
 
 }
 
+
+//Unused right now, this was set up for a restart function not yet implemented. Could probably just change runGame to check roundsPlayed and act accordingly instead of having a whole new function
 function restartGame () {
 
     //Initial Drawing
